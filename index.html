@@ -18,7 +18,8 @@
         background-color: rgba(0, 0, 0, 0.5);
       }
     </style>
-  <body style="background-image: url('https://assets.zyrosite.com/mxBlyJk3v4f0qnxK/jojo-art-YX4XO87g1KtqLDE8.jpg');">
+  <!--<body style="background-image: url('https://assets.zyrosite.com/mxBlyJk3v4f0qnxK/jojo-art-YX4XO87g1KtqLDE8.jpg');">--> 
+    <body style="background-color: #000000d9;"></body>
     <script type="module" src="./index.js"></script>  
     <script>
       function clearCache() {
@@ -34,7 +35,7 @@
     </script>
     <div id="unity-container" class="unity-desktop">
            
-      <canvas id="unity-canvas" width=1920 height=1080 ></canvas>
+      <canvas id="unity-canvas" width=1280 height=720 ></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
@@ -59,8 +60,8 @@
       var initwidth = window.innerWidth;
       //// var pixelRatio = window.devicePixelRatio || 1;
       var mainDiv = document.getElementById('unity-container');
-      //  mainDiv.style.width = 1920 / pixelRatio + 'px';
-      // mainDiv.style.height = 1080 / pixelRatio + 'px';
+      //  mainDiv.style.width = 1280 / pixelRatio + 'px';
+      // mainDiv.style.height = 720 / pixelRatio + 'px';
       var pixelRatio = window.devicePixelRatio || 1;
       var mainCanvas = document.getElementById('unity-canvas');
       mainCanvas.style.width = 1 / pixelRatio + 'px';
@@ -71,11 +72,11 @@
           /*
           mainCanvas.style.position = "absolute";
           mainCanvas.style.top = "50%";
-          const posi = (window.innerWidth - 1080/ pixelRatio)/1;
+          const posi = (window.innerWidth - 720/ pixelRatio)/1;
           mainCanvas.style.left = posi+'px';
           mainCanvas.style.transform = "translate(-50%, -50%)";
           */
-          //   if (document.body.offsetWidth >= 1920 || true) {
+          //   if (document.body.offsetWidth >= 1280 || true) {
           //     document.getElementById("main").style.textAlign = "center";
           //   } else {
           document.getElementById("unity-container").style.textAlign = "center";
@@ -87,13 +88,13 @@
           buildTitle.style.display = "none";
 
           //    mainCanvas.style.position = "relative";
-          //    mainCanvas.style.left = Math.abs(((1920 - document.body.offsetWidth)/4)) + 'px';
+          //    mainCanvas.style.left = Math.abs(((1280 - document.body.offsetWidth)/4)) + 'px';
           //    mainCanvas.style.left = 70 + 'px';
           //  }
-          const minCanvasWidth = 1920 / pixelRatio;
-          const maxCanvasWidth = 1920 / pixelRatio;
-          const minCanvasHeight = 1080 / pixelRatio;
-          const maxCanvasHeight = 1080 / pixelRatio;
+          const minCanvasWidth = 1280 / pixelRatio;
+          const maxCanvasWidth = 1280 / pixelRatio;
+          const minCanvasHeight = 720 / pixelRatio;
+          const maxCanvasHeight = 720 / pixelRatio;
           // Get the width and height of the browser window
           const windowWidth = window.innerWidth;
           const windowHeight = window.innerHeight;
@@ -110,11 +111,11 @@
             newCanvasWidth = newCanvasHeight * canvasAspectRatio;
           }
           // Set the new width and height of the canvas
-          //body.style.width = 1920/ pixelRatio+'px';
-          mainCanvas.style.width = 1920 / pixelRatio + 'px';
-          mainCanvas.style.height = 1080 / pixelRatio + 'px';
-          document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=' + 1920 / pixelRatio + 'px, initial-scale=' + 1);
-          document.body.style.zoom = (1920 / pixelRatio) / window.innerWidth * 100 + "%";
+          //body.style.width = 1280/ pixelRatio+'px';
+          mainCanvas.style.width = 1280 / pixelRatio + 'px';
+          mainCanvas.style.height = 720 / pixelRatio + 'px';
+          document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=' + 1280 / pixelRatio + 'px, initial-scale=' + 1);
+          document.body.style.zoom = (1280 / pixelRatio) / window.innerWidth * 100 + "%";
           if (document.getElementById("unity-container").clientHeight < window.innerHeight) {
             var Heightoffset = (window.innerHeight - document.getElementById("unity-container").clientHeight) / 2;
           } else {
@@ -129,10 +130,10 @@
           document.getElementById("unity-fullscreen-button").style.display = 'none';
         } else {
           mainDiv.style.textAlign = "center";
-          const minCanvasWidth = 1920 / pixelRatio;
-          const maxCanvasWidth = 1920 / pixelRatio;
-          const minCanvasHeight = 1080 / pixelRatio;
-          const maxCanvasHeight = 1080 / pixelRatio;
+          const minCanvasWidth = 1280 / pixelRatio;
+          const maxCanvasWidth = 1280 / pixelRatio;
+          const minCanvasHeight = 720 / pixelRatio;
+          const maxCanvasHeight = 720 / pixelRatio;
           // Get the width and height of the browser window
           const windowWidth = window.innerWidth;
           const windowHeight = window.innerHeight;
@@ -223,8 +224,8 @@
               config.devicePixelRatio = 1;
               unityShowBanner('WebGL builds are not supported on mobile devices.');
             } else {
-              canvas.style.width = "1920px";
-              canvas.style.height = "1080px";
+              canvas.style.width = "1280px";
+              canvas.style.height = "720px";
             }
       */
       loadingBar.style.display = "block";

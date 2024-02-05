@@ -496,3 +496,44 @@ window.getAggressiveGasPrice = async function() {
 };
 
 
+
+// Define the Fantom chain details
+const fantomChain = {
+  chainId: "0x" + (64165).toString(16), // Convert decimal to hexadecimal
+  chainName: "Fantom Sonic Builders Testnet", // Network name
+  rpcUrls: ["https://rpc.sonic.fantom.network/"], // RPC URL
+  nativeCurrency: {
+    symbol: "FTM", // Native token symbol
+    decimals: 18, // Native token decimals
+  },
+  blockExplorerUrls: ["https://public-sonic.fantom.network"], // Block explorer URL
+};
+
+// Connect to the Fantom chain using ethers.js
+async function connectToFantom() {
+  // Create a provider using the Fantom RPC URL
+  const provider = new ethers.providers.JsonRpcProvider(fantomChain.rpcUrls[0]);
+
+  // Check if MetaMask is installed and connected
+  if (window.ethereum && window.ethereum.isMetaMask) {
+    try {
+      // Request access to the user's accounts
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+      // Create a wallet using the provider and signer
+      const wallet = new ethers.Wallet(accounts[0], provider);
+
+      // Perform some operation (e.g., get the balance)
+      const balance = await wallet.getBalance();
+      console.log(`Wallet balance: ${ethers.utils.formatEther(balance)} ${fantomChain.nativeCurrency.symbol}`);
+    } catch (error) {
+      console.error("Error connecting to Fantom chain:", error);
+    }
+  } else {
+    console.warn("MetaMask not detected or unavailable.");
+  }
+}
+
+// Call the connectToFantom function to connect to the Fantom chain
+connectToFantom();
+

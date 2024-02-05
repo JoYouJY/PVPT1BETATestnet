@@ -258,28 +258,25 @@ async function sendContract(id, method, abi, contract, args, value, gasLimit, ga
 		const contractWithSigner = contracts.connect(signerNEW);
 	  
     var options = {};
-    if (gasLimit != "" && gasPrice != "") {
-      options = {
-        gasLimit: gasLimit,
-        gasPrice: gasPrice
-      };
-    }
-    else if (gasLimit != "") { options = { gasLimit: gasLimit }; }
-    else if (gasPrice != "") { options = { gasPrice: gasPrice }; }
-
+    if (gasLimit != "") { options.gasLimit = gasLimit; }
+    if (gasPrice != "") { options.gasPrice = gasPrice; }
+    if (value    != "") { options.value    = value; }
 
 	  console.log("waiting metamask");
     
-    console.log(id)
     //console.log(from)
+    console.log(id)
     console.log(contract)
     console.log(method)
     console.log(args)
+	  console.log(options);
     console.log(value)
     console.log(gasLimit)
     console.log(gasPrice)
+
+
     // args = "[\"0xC69658BC4Ec4e903Bc0A04e50705A5225Aa88dfc\", 1]";
-    console.log(args)
+    // console.log(args)
 /*
     new web3.eth.Contract(JSON.parse(abi), contract).methods[method](...JSON.parse(args))
         .send({

@@ -55,7 +55,7 @@ async function ConnectWallet(){
     // only have read-only access
     console.log("MetaMask not installed; using read-only defaults")
     //provider = ethers.getDefaultProvider()
-    providerNEW = new ethers.JsonRpcProvider('https://rpcapi.sonic.fantom.network/');
+    //providerNEW = new ethers.JsonRpcProvider('https://rpcapi.sonic.fantom.network/');
 
   } else {
 
@@ -63,6 +63,7 @@ async function ConnectWallet(){
     // protocol that allows Ethers access to make all read-only
     // requests through MetaMask.
     providerNEW = new ethers.BrowserProvider(window.ethereum)
+    console.log(window.ethereum);
 
     // It also provides an opportunity to request access to write
     // operations, which will be performed by the private key
@@ -150,7 +151,7 @@ window.JsCallFunction = JsCallFunction;
 async function JsGetFunction(type, arg_string){
   console.log("JsGetFunction")
   console.log(type)
-  console.log(arg_string)
+  // console.log(arg_string)
 
 
   arg_string = arg_string.toString()
@@ -333,12 +334,13 @@ try {
 		  // Wait for the transaction to be mined and get receipt
       console.log(transaction.hash);
       response(response_type.HASH, method);
-      const receipt = await getTransactionReceiptWithRetry(transaction.hash, 35);
+      const receipt = await getTransactionReceiptWithRetry(transaction.hash, 120);
       console.log("USE OTHER METHOD",receipt )
       const endTime2 = new Date();
 		  const timeTaken2 = endTime2 - startTime;
       console.log('First Time taken (ms):', timeTaken2);
       //----------------------------------------
+      console.log('log', receipt.logs);
       const parsedLogs = [];
       for (const log of receipt.logs) {
         const parsedLog = contracts.interface.parseLog(log);
@@ -380,9 +382,9 @@ function delay(ms) {
 async function getTransactionReceiptWithRetry(txHash, maxRetries) {
   let retries = 0;
   let txReceipt = null;
-  await delay(300); // Wait for 0.5 seconds before retrying
+  await delay(800); // Wait for 0.5 seconds before retrying
   while (retries < maxRetries) {
-    await delay(300); // Wait for 0.5 seconds before retrying
+    await delay(450); // Wait for 0.5 seconds before retrying
     txReceipt = await providerNEW.getTransactionReceipt(txHash);
 
     if (txReceipt) {
@@ -494,43 +496,59 @@ window.getAggressiveGasPrice = async function() {
 
 
 
-// Define the Fantom chain details
+
+//const { ethers, providers } = require('ethers');
+
 const fantomChain = {
-  chainId: "0x" + (64165).toString(16), // Convert decimal to hexadecimal
-  chainName: "Fantom Sonic Builders Testnet", // Network name
-  rpcUrls: ["https://rpc.sonic.fantom.network/"], // RPC URL
+  chainId: "0x190",
+  chainName: "Fantom Opera",
+  rpcUrls: ["https://rpc.ankr.com/fantom/"],
   nativeCurrency: {
-    symbol: "FTM", // Native token symbol
-    decimals: 18, // Native token decimals
+    symbol: "FTM",
+    decimals: 18,
   },
-  blockExplorerUrls: ["https://public-sonic.fantom.network"], // Block explorer URL
+  blockExplorerUrls: ["https://ftmscan.com/"],
 };
 
-// Connect to the Fantom chain using ethers.js
-async function connectToFantom() {
-  // Create a provider using the Fantom RPC URL
-  const provider = new ethers.providers.JsonRpcProvider(fantomChain.rpcUrls[0]);
-
-  // Check if MetaMask is installed and connected
-  if (window.ethereum && window.ethereum.isMetaMask) {
-    try {
-      // Request access to the user's accounts
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-      // Create a wallet using the provider and signer
-      const wallet = new ethers.Wallet(accounts[0], provider);
-
-      // Perform some operation (e.g., get the balance)
-      const balance = await wallet.getBalance();
-      console.log(`Wallet balance: ${ethers.utils.formatEther(balance)} ${fantomChain.nativeCurrency.symbol}`);
-    } catch (error) {
-      console.error("Error connecting to Fantom chain:", error);
+async function switchToFantom() {
+  try{
+    await window.ethereum.request({
+    method: 'wallet_switchEthereumChain',
+    params: [{ chainId: 'FAA5' }],    // sonic testnet is FAA5 mainnet 0xFA
+    });
+  }catch (error) {
+    // Handle errors appropriately:
+    if (error.code === 4902) { // Check for "User rejected the request" error code
+      console.error("User rejected the network switch request.");
+      // Optionally display a user-friendly message explaining the situation
+    } else if (error.code === 4901) { // Check for "Chain not found" error code
+      console.error("Fantom Chain not found in your wallet.");
+      // Provide clear instructions on how to add the Fantom Chain (e.g., link to a guide)
+    } else {
+      console.error("Error switching to Fantom Chain:", error);
+      // Optionally display a generic error message for other unexpected errors
     }
-  } else {
-    console.warn("MetaMask not detected or unavailable.");
   }
-}
+ }
 
 // Call the connectToFantom function to connect to the Fantom chain
-connectToFantom();
+//connectToFantom();
+setTimeout(switchToFantom, 1000);
 
+//Resize Canvas
+document.addEventListener("DOMContentLoaded", function() {
+  
+  // Add click event listener to the button
+  document.getElementById("rotatebutton").addEventListener("click", rotateCanvas);
+  console.log("resizeclicked");
+
+});
+
+
+function rotateCanvas() {
+  console.log("resize");
+  var canvas = document.getElementById('unity-canvas');
+  var temp = canvas.style.width;
+  canvas.style.width = canvas.style.height;
+  canvas.style.height = temp;
+}

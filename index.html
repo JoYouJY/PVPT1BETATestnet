@@ -84,11 +84,7 @@
           //   } else {
           document.getElementById("unity-container").style.textAlign = "center";
 
-          var rotateButton = document.getElementById("unity-rotate-button");
-          rotateButton.style.display = "none";
-
-          var buildTitle = document.getElementById("unity-build-title");
-          buildTitle.style.display = "none";
+          
 
           //    mainCanvas.style.position = "relative";
           //    mainCanvas.style.left = Math.abs(((1280 - document.body.offsetWidth)/4)) + 'px';
@@ -132,7 +128,11 @@
           //remove fullscreen mode for Mobile since the size will be wrong.
           
         } else {
-          
+          var rotateButton = document.getElementById("unity-rotate-button");
+          rotateButton.style.display = "none";
+
+          var buildTitle = document.getElementById("unity-build-title");
+          buildTitle.style.display = "none";
           mainDiv.style.textAlign = "center";
           const minCanvasWidth = 1280 / pixelRatio;
           const maxCanvasWidth = 1280 / pixelRatio;

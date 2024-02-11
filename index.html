@@ -48,8 +48,8 @@
       <div id="unity-warning"></div>
       <!--<div id="unity-footer">
         <div id="unity-webgl-logo"></div>-->
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">Full Screen mode</div>
+        <div id="unity-rotate-button"></div>
+        <div id="unity-build-title" style="color:beige">Rotate Screen</div>
         <div style="font-family: 'Arial Black', sans-serif; font-size: 28px; color: #010b16; text-shadow: 2px 2px 4px #15669b;">FATE ADVENTURE RPG - BETA - V1.0 </div>
       </div>
     </div>
@@ -84,8 +84,8 @@
           //   } else {
           document.getElementById("unity-container").style.textAlign = "center";
 
-          var fullscreenButton = document.getElementById("unity-fullscreen-button");
-          fullscreenButton.style.display = "none";
+          var rotateButton = document.getElementById("unity-rotate-button");
+          rotateButton.style.display = "none";
 
           var buildTitle = document.getElementById("unity-build-title");
           buildTitle.style.display = "none";
@@ -130,8 +130,9 @@
           //myDiv.textContent = "openALPHA - expect bugs.";
           //myDiv.style.height = Heightoffset + 'px';
           //remove fullscreen mode for Mobile since the size will be wrong.
-          document.getElementById("unity-fullscreen-button").style.display = 'none';
+          
         } else {
+          
           mainDiv.style.textAlign = "center";
           const minCanvasWidth = 1280 / pixelRatio;
           const maxCanvasWidth = 1280 / pixelRatio;
@@ -177,7 +178,7 @@
       var canvas = document.querySelector("#unity-canvas");
       var loadingBar = document.querySelector("#unity-loading-bar");
       var progressBarFull = document.querySelector("#unity-progress-bar-full");
-      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+      //var fullscreenButton = document.querySelector("#unity-fullscreen-button");
       var warningBanner = document.querySelector("#unity-warning");
       // Shows a temporary message banner/ribbon for a few seconds, or
       // a permanent error message on top of the canvas if type=='error'.
@@ -240,9 +241,9 @@
         }).then((unityInstance) => {
           window.unityInstance = unityInstance;
           loadingBar.style.display = "none";
-          fullscreenButton.onclick = () => {
+          /*fullscreenButton.onclick = () => {
             unityInstance.SetFullscreen(1);
-          };
+          };*/
         }).catch((message) => {
           alert(message);
         });
@@ -286,26 +287,6 @@
     console.log('zzzAggressive gas price:', zzz);
  */ 
   </script>
-
-  <style>
-    .rotate-button {
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-
-    .rotate-button:hover {
-      background-color: #45a049;
-    }
-  </style>
-
-  
-<button class="rotate-button" id="rotatebutton">Rotate Canvas</button>
-
 
 
 

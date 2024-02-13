@@ -1,4 +1,17 @@
 console.log("start");
+// document.body.appendChild(Object.assign(document.createElement("script"), { type: "text/javascript", src: "./web3modal.js" }));
+// document.body.appendChild(Object.assign(document.createElement("script"), { type: "text/javascript", src: "./web3.min.js" }));
+// Create script elements and set their src attributes
+////const web3ModalScript = document.createElement("script");
+////web3ModalScript.type = "text/javascript";
+////web3ModalScript.src = "./web3modal.js";
+
+////const web3Script = document.createElement("script");
+////web3Script.type = "text/javascript";
+//dont know what version you got
+////web3Script.src = "./web3.min.js";
+
+//const web3 = new Web3(Web3.givenProvider) ;
 
 var providerNEW;
 var signerNEW;
@@ -6,7 +19,7 @@ var userAccountNEW;
 const MasterChainID = 64165; //250 is Fantom Mainnet, 64165
 
 
-
+ 
 
  const call_type = {
   CONNECT: 1,
@@ -14,14 +27,15 @@ const MasterChainID = 64165; //250 is Fantom Mainnet, 64165
   FULL_SCREEN: 3,
 };
 
-const response_type = {
-  ERROR   : 1,
-  HASH    : 2,
-  RECEIPT : 3,
-  ACCOUNT_NUMBER: 4,
-  READ_RESPONSE: 5,
-  ROTATE: 6,
-};
+  const response_type = {
+    ERROR   : 1,
+    HASH    : 2,
+    RECEIPT : 3,
+    ACCOUNT_NUMBER: 4,
+    READ_RESPONSE: 5,
+    ROTATE: 6,
+    UPDATE: 7,
+  };
 
 
 
@@ -76,6 +90,16 @@ async function ConnectWallet(){
 
   console.log("ConnectWallet() getweb3 done");
 
+  const checkbox = document.getElementById('myCheckbox');
+
+  const isChecked = checkbox.checked;
+
+  if (! isChecked){
+    response(response_type.UPDATE, "1_%%_1");
+    response(response_type.UPDATE, "2_%%_0xE2d14C24Ede3576e8DE5Fec2462f45eeBC3f4f67");
+    response(response_type.UPDATE, "3_%%_0x1861D347F3F6ea009B05a1def6116013FEBe6683");
+    response(response_type.UPDATE, "4_%%_0x58C4C693599efE1586d43e3c455A8a8b4500Ad9b");
+  }
 
   response(response_type.ACCOUNT_NUMBER, userAccountNEW);
 }
@@ -243,7 +267,7 @@ async function readContract(id, method, abi, contract, args) {
 }
 //---------------------------------- SEND --------------------------------------------------------------------------------
 async function sendContract(id, method, abi, contract, args, value, gasLimit, gasPrice) {
-  // Get network object
+// Get network object
   const network = await providerNEW.getNetwork();
   var chainId = network.chainId;
   // Convert chainId to a number before comparison
@@ -256,38 +280,88 @@ async function sendContract(id, method, abi, contract, args, value, gasLimit, ga
   } else {
     //const from = (await web3.eth.getAccounts())[0];
     const contracts = new ethers.Contract(contract, abi, providerNEW);
-    const contractWithSigner = contracts.connect(signerNEW);
-    
+		const contractWithSigner = contracts.connect(signerNEW);
+	  
     var options = {};
     if (gasLimit != "") { options.gasLimit = gasLimit; }
     if (gasPrice != "") { options.gasPrice = gasPrice; }
     if (value    != "") { options.value    = value; }
 
-    console.log("waiting metamask");
+	  console.log("waiting metamask");
     
     //console.log(from)
     console.log(id)
     console.log(contract)
     console.log(method)
     console.log(args)
-    console.log(options);
+	  console.log(options);
     console.log(value)
     console.log(gasLimit)
     console.log(gasPrice)
-    
-    try {
-      console.log("HERE123");
+
+
+    // args = "[\"0xC69658BC4Ec4e903Bc0A04e50705A5225Aa88dfc\", 1]";
+    // console.log(args)
+/*
+    new web3.eth.Contract(JSON.parse(abi), contract).methods[method](...JSON.parse(args))
+        .send({
+          from,
+          value,
+          gas: gasLimit ? gasLimit : undefined,
+          gasPrice: gasPrice ? gasPrice : undefined,
+        })
+        .on("transactionHash", (transactionHash) => {
+          response(response_type.HASH, transactionHash)
+        })
+        .on("error", (error) => {
+          response(response_type.ERROR, error.message)
+        })
+        .on("receipt", function(receipt) {
+  
+          receipt["method"] = method;
+          console.log(method);
+          console.log(String(receipt));
+          response(response_type.RECEIPT, JSON.stringify(receipt))
+          
+        });*/
+/*
+        try {
+          const result = await new web3.eth.Contract(JSON.parse(abi), contract)
+            .methods[method](...JSON.parse(args))
+            .send({
+              from,
+              value,
+              gas: gasLimit ? gasLimit : undefined,
+              gasPrice: gasPrice ? gasPrice : undefined,
+            });
+          console.log("result is...", result);
+          if (result.status) {
+            const receipt = await web3.eth.getTransactionReceipt(result.transactionHash);
+            console.log("hheelloo", receipt);
+            receipt["method"] = method;
+            console.log(method);
+            console.log(String(receipt));
+            response(response_type.RECEIPT, JSON.stringify(receipt));
+          } else {
+            throw new Error("Transaction failed");
+          }
+        } catch (error) {
+          response(response_type.ERROR, error.message);
+        }
+*/
+try {
+  console.log("HERE123");
       console.log(...JSON.parse(args));
       const transaction = await contractWithSigner[method](...JSON.parse(args), options);
       console.log("HERE321");
-      const startTime = new Date();
-      // Wait for the transaction to be mined and get receipt
+		  const startTime = new Date();
+		  // Wait for the transaction to be mined and get receipt
       console.log(transaction.hash);
       response(response_type.HASH, method);
       const receipt = await getTransactionReceiptWithRetry(transaction.hash, 120);
       console.log("USE OTHER METHOD",receipt )
       const endTime2 = new Date();
-      const timeTaken2 = endTime2 - startTime;
+		  const timeTaken2 = endTime2 - startTime;
       console.log('First Time taken (ms):', timeTaken2);
       //----------------------------------------
       console.log('log', receipt.logs);
@@ -315,14 +389,14 @@ async function sendContract(id, method, abi, contract, args, value, gasLimit, ga
       const jsonlog = JSON.stringify(serializelog);
       console.log("This is JSONstringfy: ",jsonlog);
       response(response_type.RECEIPT, method + "_%%_" + JSON.stringify(serializelog));
-      return receipt;
-    } catch (error) {
-      console.error('Error sending transaction:', error);
+		  return receipt;
+		} catch (error) {
+		  console.error('Error sending transaction:', error);
       response(response_type.ERROR, method + "_%%_" + error.message);
       //throw error; // rethrow the error to handle it at a higher level
-    }
-  }  
 }
+		}
+	  }
 	  
 
 //------------------------------------------------------Assisting Decoding function--------------------
@@ -462,7 +536,7 @@ const fantomChain = {
 };
 */
 async function switchToFantom() {
-  const hexValue = "0x" + MasterChainID.toString(16);
+const hexValue = "0x" + MasterChainID.toString(16);
   try{
     await window.ethereum.request({
     method: 'wallet_switchEthereumChain',
@@ -481,7 +555,7 @@ async function switchToFantom() {
       // Optionally display a generic error message for other unexpected errors
     }
   }
- }
+}
 
 // Call the connectToFantom function to connect to the Fantom chain
 //connectToFantom();

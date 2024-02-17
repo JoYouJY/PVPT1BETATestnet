@@ -67,6 +67,18 @@ async function ConnectWallet(){
     // requests through MetaMask.
     providerNEW = new ethers.BrowserProvider(window.ethereum)
     console.log(window.ethereum);
+    const network = await providerNEW.getNetwork();
+    var chainId = network.chainId;
+    // Convert chainId to a number before comparison
+    chainId = parseInt(chainId, 10);
+    console.log("Chain ID:", chainId);
+
+    // Check if chain ID is not 250
+    if (chainId !== MasterChainID) {
+      switchToFantom();
+      alert("Switch to Fantom Network before Connecting."); // Display alert pop-up
+      return;
+    }
 
     // It also provides an opportunity to request access to write
     // operations, which will be performed by the private key
@@ -119,6 +131,7 @@ function EnterFullScreen(){
 // ConnectWallet();
 
 function JsCallFunction(type, arg_string){
+  
   console.log("JsCallFunction")
   console.log(type)
   console.log(arg_string)
@@ -148,7 +161,7 @@ function JsCallFunction(type, arg_string){
           var abi         = splited_text[7];
 
 
-
+          console.log("SEND CONTRACT")
           sendContract(bridge_id, method, abi, address, args, price, gasLimit, gasPrice) 
 
       }
@@ -162,6 +175,7 @@ window.JsCallFunction = JsCallFunction;
 
 
 async function JsGetFunction(type, arg_string){
+  
   console.log("JsGetFunction")
   console.log(type)
   // console.log(arg_string)
@@ -268,6 +282,8 @@ async function readContract(id, method, abi, contract, args) {
 //---------------------------------- SEND --------------------------------------------------------------------------------
 async function sendContract(id, method, abi, contract, args, value, gasLimit, gasPrice) {
 // Get network object
+console.log("gETpROVIDER")
+  providerNEW = new ethers.BrowserProvider(window.ethereum);
   const network = await providerNEW.getNetwork();
   var chainId = network.chainId;
   // Convert chainId to a number before comparison
@@ -276,7 +292,8 @@ async function sendContract(id, method, abi, contract, args, value, gasLimit, ga
 
   // Check if chain ID is not 250
   if (chainId !== MasterChainID) {
-    response(response_type.ERROR, method + "_%%_" + "wrong RPC, switch to Fantom Mainnet and Restart/Refresh(F5).");
+    switchToFantom();
+    response(response_type.ERROR, method + "_%%_" + "wrong RPC, switch to Fantom Network and Retry.");
   } else {
     //const from = (await web3.eth.getAccounts())[0];
     const contracts = new ethers.Contract(contract, abi, providerNEW);
@@ -299,104 +316,54 @@ async function sendContract(id, method, abi, contract, args, value, gasLimit, ga
     console.log(gasLimit)
     console.log(gasPrice)
 
-
-    // args = "[\"0xC69658BC4Ec4e903Bc0A04e50705A5225Aa88dfc\", 1]";
-    // console.log(args)
-/*
-    new web3.eth.Contract(JSON.parse(abi), contract).methods[method](...JSON.parse(args))
-        .send({
-          from,
-          value,
-          gas: gasLimit ? gasLimit : undefined,
-          gasPrice: gasPrice ? gasPrice : undefined,
-        })
-        .on("transactionHash", (transactionHash) => {
-          response(response_type.HASH, transactionHash)
-        })
-        .on("error", (error) => {
-          response(response_type.ERROR, error.message)
-        })
-        .on("receipt", function(receipt) {
-  
-          receipt["method"] = method;
-          console.log(method);
-          console.log(String(receipt));
-          response(response_type.RECEIPT, JSON.stringify(receipt))
+  try {
+    console.log("HERE123");
+        console.log(...JSON.parse(args));
+        const transaction = await contractWithSigner[method](...JSON.parse(args), options);
+        console.log("HERE321");
+        const startTime = new Date();
+        // Wait for the transaction to be mined and get receipt
+        console.log(transaction.hash);
+        response(response_type.HASH, method);
+        const receipt = await getTransactionReceiptWithRetry(transaction.hash, 120);
+        console.log("USE OTHER METHOD",receipt )
+        const endTime2 = new Date();
+        const timeTaken2 = endTime2 - startTime;
+        console.log('First Time taken (ms):', timeTaken2);
+        //----------------------------------------
+        console.log('log', receipt.logs);
+        const parsedLogs = [];
+        for (const log of receipt.logs) {
+          const parsedLog = contracts.interface.parseLog(log);
           
-        });*/
-/*
-        try {
-          const result = await new web3.eth.Contract(JSON.parse(abi), contract)
-            .methods[method](...JSON.parse(args))
-            .send({
-              from,
-              value,
-              gas: gasLimit ? gasLimit : undefined,
-              gasPrice: gasPrice ? gasPrice : undefined,
-            });
-          console.log("result is...", result);
-          if (result.status) {
-            const receipt = await web3.eth.getTransactionReceipt(result.transactionHash);
-            console.log("hheelloo", receipt);
-            receipt["method"] = method;
-            console.log(method);
-            console.log(String(receipt));
-            response(response_type.RECEIPT, JSON.stringify(receipt));
+          if (parsedLog) {
+            parsedLogs.push(parsedLog);
           } else {
-            throw new Error("Transaction failed");
+            parsedLogs.push(log);
           }
-        } catch (error) {
-          response(response_type.ERROR, error.message);
         }
-*/
-try {
-  console.log("HERE123");
-      console.log(...JSON.parse(args));
-      const transaction = await contractWithSigner[method](...JSON.parse(args), options);
-      console.log("HERE321");
-		  const startTime = new Date();
-		  // Wait for the transaction to be mined and get receipt
-      console.log(transaction.hash);
-      response(response_type.HASH, method);
-      const receipt = await getTransactionReceiptWithRetry(transaction.hash, 120);
-      console.log("USE OTHER METHOD",receipt )
-      const endTime2 = new Date();
-		  const timeTaken2 = endTime2 - startTime;
-      console.log('First Time taken (ms):', timeTaken2);
-      //----------------------------------------
-      console.log('log', receipt.logs);
-      const parsedLogs = [];
-      for (const log of receipt.logs) {
-        const parsedLog = contracts.interface.parseLog(log);
+        console.log("this is parsed log: ", parsedLogs);
+        // Now parsedLogs contains the parsed logs and raw logs if they didn't match the ABI
         
-        if (parsedLog) {
-          parsedLogs.push(parsedLog);
-        } else {
-          parsedLogs.push(log);
-        }
+
+        const unwraplog = unwrapProxy(parsedLogs);
+        console.log("Unwrapped proxy: ",unwraplog);
+
+        
+        const serializelog = convertBigIntsToStrings(unwraplog);
+        console.log("serialize log: ",serializelog);
+
+        const jsonlog = JSON.stringify(serializelog);
+        console.log("This is JSONstringfy: ",jsonlog);
+        response(response_type.RECEIPT, method + "_%%_" + JSON.stringify(serializelog));
+        return receipt;
+      } catch (error) {
+        console.error('Error sending transaction:', error);
+        response(response_type.ERROR, method + "_%%_" + error.message);
+        //throw error; // rethrow the error to handle it at a higher level
       }
-      console.log("this is parsed log: ", parsedLogs);
-      // Now parsedLogs contains the parsed logs and raw logs if they didn't match the ABI
-      
-
-      const unwraplog = unwrapProxy(parsedLogs);
-      console.log("Unwrapped proxy: ",unwraplog);
-
-      
-      const serializelog = convertBigIntsToStrings(unwraplog);
-      console.log("serialize log: ",serializelog);
-
-      const jsonlog = JSON.stringify(serializelog);
-      console.log("This is JSONstringfy: ",jsonlog);
-      response(response_type.RECEIPT, method + "_%%_" + JSON.stringify(serializelog));
-		  return receipt;
-		} catch (error) {
-		  console.error('Error sending transaction:', error);
-      response(response_type.ERROR, method + "_%%_" + error.message);
-      //throw error; // rethrow the error to handle it at a higher level
+	}
 }
-		}
-	  }
 	  
 
 //------------------------------------------------------Assisting Decoding function--------------------

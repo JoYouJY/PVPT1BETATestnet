@@ -102,16 +102,7 @@ async function ConnectWallet(){
 
   console.log("ConnectWallet() getweb3 done");
 
-  const checkbox = document.getElementById('myCheckbox');
-
-  const isChecked = checkbox.checked;
-
-  if (! isChecked){
-    response(response_type.UPDATE, "1_%%_1");
-    response(response_type.UPDATE, "2_%%_0xE2d14C24Ede3576e8DE5Fec2462f45eeBC3f4f67");
-    response(response_type.UPDATE, "3_%%_0x1861D347F3F6ea009B05a1def6116013FEBe6683");
-    response(response_type.UPDATE, "4_%%_0x58C4C693599efE1586d43e3c455A8a8b4500Ad9b");
-  }
+  walkaround();
 
   response(response_type.ACCOUNT_NUMBER, userAccountNEW);
 }
@@ -528,6 +519,7 @@ const hexValue = "0x" + MasterChainID.toString(16);
 //connectToFantom();
 setTimeout(switchToFantom, 1000);
 
+/*
 //Resize Canvas
 document.addEventListener("DOMContentLoaded", function() {
   
@@ -536,6 +528,7 @@ document.addEventListener("DOMContentLoaded", function() {
   console.log("resizeclicked");
 
 });
+*/
 
 var isHorizontal = true;
 function rotateCanvas() {

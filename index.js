@@ -530,7 +530,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 */
-console.log("REFRESHED");
+console.log("REFRESHED2");
 
 var isHorizontal = true;
 function rotateCanvas() {

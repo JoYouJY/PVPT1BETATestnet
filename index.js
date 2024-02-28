@@ -521,7 +521,7 @@ setTimeout(switchToFantom, 1000);
 
 
 //Resize Canvas
-/*
+
 document.addEventListener("DOMContentLoaded", function() {
   
   // Add click event listener to the button
@@ -529,8 +529,8 @@ document.addEventListener("DOMContentLoaded", function() {
   console.log("resizeclicked");
 
 });
-*/
-console.log("REFRESHED2");
+
+console.log("REFRESHED3");
 
 var isHorizontal = true;
 function rotateCanvas() {

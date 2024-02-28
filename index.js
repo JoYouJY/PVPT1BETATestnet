@@ -519,7 +519,7 @@ const hexValue = "0x" + MasterChainID.toString(16);
 //connectToFantom();
 setTimeout(switchToFantom, 1000);
 
-/*
+
 //Resize Canvas
 document.addEventListener("DOMContentLoaded", function() {
   
@@ -528,7 +528,7 @@ document.addEventListener("DOMContentLoaded", function() {
   console.log("resizeclicked");
 
 });
-*/
+
 
 var isHorizontal = true;
 function rotateCanvas() {

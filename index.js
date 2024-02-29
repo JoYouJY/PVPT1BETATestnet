@@ -517,7 +517,7 @@ const hexValue = "0x" + MasterChainID.toString(16);
 
 // Call the connectToFantom function to connect to the Fantom chain
 //connectToFantom();
-setTimeout(switchToFantom, 1000);
+//setTimeout(switchToFantom, 1000);
 
 
 //Resize Canvas
